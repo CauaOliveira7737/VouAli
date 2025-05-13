@@ -48,9 +48,7 @@ const App = () => {
             <Stack.Screen name="Login">
               {({ navigation }) => <LoginScreen onLogin={handleLogin} navigation={navigation} />}
             </Stack.Screen>
-            <Stack.Screen name="Register">
-              {({ navigation }) => <RegisterScreen navigation={navigation} />}
-            </Stack.Screen>
+            <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
           <>
