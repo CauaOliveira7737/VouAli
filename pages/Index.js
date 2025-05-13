@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Button } from 'react-native';
+import { View, ScrollView, StyleSheet, Button, SafeAreaView } from 'react-native';
 import SearchBar from '../components/layout/SearchBar';
 import EventList from '../components/events/EventList';
 import BottomNav from '../components/layout/BottomNav';
@@ -26,9 +26,6 @@ const Index = ({ onLogout }) => {
     try {
       const coords = await getCurrentLocation();
       console.log('Localização atual:', coords);
-
-      // Exemplo futuro:
-      // await loadEventsByCoordinates(coords.latitude, coords.longitude);
     } catch (error) {
       console.warn('Erro ao obter localização:', error);
     }
@@ -40,34 +37,45 @@ const Index = ({ onLogout }) => {
   const nearbyEvents = events.slice(1, 4);
 
   return (
-    <View style={styles.screen}>
-      <SearchBar onSearch={loadEvents} />
-      {onLogout && (
-        <View style={styles.logoutButtonContainer}>
-          <Button title="Sair" color="#DC2626" onPress={onLogout} />
-        </View>
-      )}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.locationButtonContainer}>
-          <Button title="Usar minha localização" onPress={handleUseCurrentLocation} />
-        </View>
-        <EventList events={nearbyEvents} title="Eventos Próximos" />
-        <EventList events={upcomingEvents} title="Em Breve" />
-        <EventList events={recentlyAttended} title="Recentemente Visitados" />
-        <EventList events={highlyRatedEvents} title="Mais Bem Avaliados" />
-      </ScrollView>
-      <BottomNav />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inner}>
+        <SearchBar onSearch={loadEvents} />
+
+        {onLogout && (
+          <View style={styles.logoutButtonContainer}>
+            <Button title="Sair" color="#DC2626" onPress={onLogout} />
+          </View>
+        )}
+
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.locationButtonContainer}>
+            <Button title="Usar minha localização" onPress={handleUseCurrentLocation} />
+          </View>
+
+          <EventList events={nearbyEvents} title="Eventos Próximos" />
+          <EventList events={upcomingEvents} title="Em Breve" />
+          <EventList events={recentlyAttended} title="Recentemente Visitados" />
+          <EventList events={highlyRatedEvents} title="Mais Bem Avaliados" />
+        </ScrollView>
+
+        <BottomNav />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
+  container: {
     flex: 1,
     backgroundColor: '#E5E7EB',
   },
+  inner: {
+    flex: 1,
+  },
   scrollContainer: {
-    paddingBottom: 80,
+    paddingBottom: 120,
+    paddingHorizontal: 12,
+    paddingTop: 16,
   },
   logoutButtonContainer: {
     marginHorizontal: 16,
