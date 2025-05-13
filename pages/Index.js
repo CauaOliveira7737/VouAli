@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, Button, SafeAreaView } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import SearchBar from '../components/layout/SearchBar';
 import EventList from '../components/events/EventList';
 import BottomNav from '../components/layout/BottomNav';
@@ -38,28 +46,32 @@ const Index = ({ onLogout }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.inner}>
-        <SearchBar onSearch={loadEvents} />
-
-        {onLogout && (
-          <View style={styles.logoutButtonContainer}>
-            <Button title="Sair" color="#DC2626" onPress={onLogout} />
-          </View>
-        )}
-
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.locationButtonContainer}>
-            <Button title="Usar minha localização" onPress={handleUseCurrentLocation} />
-          </View>
-
-          <EventList events={nearbyEvents} title="Eventos Próximos" />
-          <EventList events={upcomingEvents} title="Em Breve" />
-          <EventList events={recentlyAttended} title="Recentemente Visitados" />
-          <EventList events={highlyRatedEvents} title="Mais Bem Avaliados" />
-        </ScrollView>
-
-        <BottomNav />
+      <View style={styles.headerWrapper}>
+        <Text style={styles.headerText}>Olá, visitante 👋</Text>
+        <Text style={styles.subHeaderText}>Vamos encontrar algo legal perto de você</Text>
       </View>
+
+      <SearchBar onSearch={loadEvents} />
+
+      {onLogout && (
+        <View style={styles.logoutButtonContainer}>
+          <Button title="Sair" color="#EF4444" onPress={onLogout} />
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.locationButton} onPress={handleUseCurrentLocation}>
+        <Text style={styles.locationButtonText}>🎯 Usar minha localização</Text>
+      </TouchableOpacity>
+
+      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <EventList events={nearbyEvents} title="📍 Eventos Próximos" />
+        <EventList events={upcomingEvents} title="📅 Em Breve" />
+        <EventList events={recentlyAttended} title="✅ Recentemente Visitados" />
+        <EventList events={highlyRatedEvents} title="⭐ Mais Bem Avaliados" />
+        <View style={{ height: 40 }} />
+      </ScrollView>
+
+      <BottomNav />
     </SafeAreaView>
   );
 };
@@ -67,23 +79,45 @@ const Index = ({ onLogout }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#FAFAFA', 
   },
-  inner: {
-    flex: 1,
+  headerWrapper: {
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 12,
   },
-  scrollContainer: {
-    paddingBottom: 120,
-    paddingHorizontal: 12,
-    paddingTop: 16,
+  headerText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1F2937', 
+  },
+  subHeaderText: {
+    fontSize: 16,
+    color: '#6B7280',
+    marginTop: 4,
   },
   logoutButtonContainer: {
-    marginHorizontal: 16,
-    marginBottom: 10,
+    marginHorizontal: 20,
+    marginTop: 6,
+    marginBottom: 6,
   },
-  locationButtonContainer: {
-    marginHorizontal: 16,
-    marginBottom: 12,
+  scrollContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+  },
+  locationButton: {
+    marginHorizontal: 20,
+    marginTop: 6,
+    marginBottom: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#4D7E53', 
+    alignItems: 'center',
+  },
+  locationButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
   },
 });
 
