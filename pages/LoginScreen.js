@@ -34,12 +34,14 @@ const LoginScreen = ({ onLogin, navigation }) => {
 
       await AsyncStorage.setItem('loggedInUser', JSON.stringify(matchedUser));
       await AsyncStorage.setItem('loggedIn', 'true');
-      onLogin();
+
+      onLogin(); // navega para a tela principal
     } catch (err) {
       console.error('Erro ao fazer login:', err);
       Alert.alert('Erro', 'Ocorreu um erro ao fazer login.');
     }
   };
+
 
   return (
     <>
@@ -88,7 +90,7 @@ const LoginScreen = ({ onLogin, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {}
+      { }
       <View style={styles.footerCircle} />
     </>
   );
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 80,
     borderBottomLeftRadius: 300,
     marginBottom: 80,
-    paddingBottom: 80,
+    paddingBottom: 100,
   },
   input: {
     width: '100%',

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Button,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from '../components/layout/SearchBar';
 import EventList from '../components/events/EventList';
 import BottomNav from '../components/layout/BottomNav';
@@ -16,10 +17,26 @@ import { getCurrentLocation } from '../utils/getCurrentLocation';
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
+  const [name, setUser] = useState(null);
 
   useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('loggedInUser');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setName(parsedUser.nome); 
+        }
+      } catch (e) {
+        console.error('Erro ao carregar usuário:', e);
+      }
+    };
+
+    loadUser();
     loadEvents();
   }, []);
+
+
 
   const loadEvents = async (searchLocation = '') => {
     try {
@@ -47,7 +64,7 @@ const Index = ({ onLogout }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerWrapper}>
-        <Text style={styles.headerText}>Olá, visitante 👋</Text>
+        <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
         <Text style={styles.subHeaderText}>Vamos encontrar algo legal perto de você</Text>
       </View>
 
@@ -79,7 +96,7 @@ const Index = ({ onLogout }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA', 
+    backgroundColor: '#FAFAFA',
   },
   headerWrapper: {
     paddingHorizontal: 20,
@@ -89,7 +106,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1F2937', 
+    color: '#1F2937',
   },
   subHeaderText: {
     fontSize: 16,
@@ -111,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: '#4D7E53', 
+    backgroundColor: '#4D7E53',
     alignItems: 'center',
   },
   locationButtonText: {
