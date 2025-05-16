@@ -13,6 +13,7 @@ const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [focusedField, setFocusedField] = useState(null); 
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -42,32 +43,56 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📋 Cadastro</Text>
+      <Text style={styles.title}>Cadastro</Text>
+      <View style={styles.nomeinput}>
 
+        <Text>nome</Text>
+        <TextInput
+          style={[styles.input, 
+          focusedField === 'nome' && styles.inputFocused]}
+          placeholder="Nome"
+          placeholderTextColor="#A6A6A6"
+          value={name}
+          onChangeText={setName}
+          onFocus={() => setFocusedField('nome')}
+          onBlur={() => setFocusedField(null)}
+          underlineColorAndroid="transparent"
+        />
+
+      </View>
       <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
+        style={[styles.input, 
+        focusedField === 'email' && styles.inputFocused]}
         placeholder="Email"
+        placeholderTextColor="#A6A6A6"
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
+        onFocus={() => setFocusedField('email')}
+        onBlur={() => setFocusedField(null)}
+        underlineColorAndroid="transparent"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, 
+        focusedField === 'password' && styles.inputFocused]}
         placeholder="Senha"
+        placeholderTextColor="#A6A6A6"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        onFocus={() => setFocusedField('password')}
+        onBlur={() => setFocusedField(null)}
+        underlineColorAndroid="transparent"
       />
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Cadastrar</Text>
+          <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.link}>Faça Login</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
@@ -75,9 +100,8 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#EEF6F1',
     justifyContent: 'center',
-    alignItems: 'center',
     padding: 24,
   },
   title: {
@@ -95,19 +119,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    marginBottom: 12,
+    marginBottom: 4,
+    outlineStyle: 'none',
+    
   },
+   inputFocused: {
+    borderColor: '#4D7E53',
+    borderWidth: 1,
+   },
   button: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#4D7E53',
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 8,
-    marginTop: 10,
+    marginTop: 8,
+    marginBottom: 4,
+    width: '100%',
   },
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
+    textAlign: 'center',
+  },
+  link: {
+    color: '#4D7E53',
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'right',
   },
 });
 
