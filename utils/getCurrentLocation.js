@@ -1,33 +1,11 @@
-import { Platform, PermissionsAndroid } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
+import * as Location from 'expo-location';
 
-export const getCurrentLocation = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          return reject('Permissão de localização negada');
-        }
-      }
+export async function getCurrentLocation() {
+  let { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    throw new Error('Permissão de localização negada');
+  }
 
-      Geolocation.getCurrentPosition(
-        (position) => {
-          resolve(position.coords); // latitude, longitude, etc.
-        },
-        (error) => {
-          reject(error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 10000,
-        }
-      );
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
+  const location = await Location.getCurrentPositionAsync({});
+  return location;
+}
