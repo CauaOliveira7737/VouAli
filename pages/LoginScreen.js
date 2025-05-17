@@ -19,23 +19,23 @@ const LoginScreen = ({ onLogin, navigation }) => {
     if (!email || !password) {
       return Alert.alert('Erro', 'Preencha todos os campos.');
     }
-
+  
     try {
       const storedUsers = await AsyncStorage.getItem('users');
       const users = storedUsers ? JSON.parse(storedUsers) : [];
-
+  
       const matchedUser = users.find(
         (user) => user.email === email && user.password === password
       );
-
+  
       if (!matchedUser) {
         return Alert.alert('Erro', 'Email ou senha inválidos.');
       }
-
+  
       await AsyncStorage.setItem('loggedInUser', JSON.stringify(matchedUser));
       await AsyncStorage.setItem('loggedIn', 'true');
-
-      onLogin(); // navega para a tela principal
+  
+      onLogin(); 
     } catch (err) {
       console.error('Erro ao fazer login:', err);
       Alert.alert('Erro', 'Ocorreu um erro ao fazer login.');

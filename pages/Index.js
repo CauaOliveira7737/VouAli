@@ -17,7 +17,7 @@ import { getCurrentLocation } from '../utils/getCurrentLocation';
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
-  const [name, setUser] = useState(null);
+  const [name, setName] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {

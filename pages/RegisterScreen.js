@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation, onLogin }) => {
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +31,7 @@ const RegisterScreen = ({ navigation }) => {
         return Alert.alert('Erro', 'Este email já está cadastrado.');
       }
 
-      const newUser = { nome: name, email, password }; // 
+      const newUser = { nome: name, email, password }; 
       const updatedUsers = [...users, newUser];
 
       await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
@@ -38,12 +39,8 @@ const RegisterScreen = ({ navigation }) => {
 
       await AsyncStorage.setItem('loggedInUser', JSON.stringify(newUser));
       await AsyncStorage.setItem('loggedIn', 'true');
+      onLogin(); 
 
-      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Index' }],
-      });
     } catch (err) {
       console.error('Erro ao cadastrar:', err);
       Alert.alert('Erro', 'Ocorreu um erro ao cadastrar.');
