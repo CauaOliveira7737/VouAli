@@ -36,6 +36,8 @@ const Index = ({ onLogout }) => {
     loadEvents();
   }, []);
 
+
+
   const loadEvents = async (searchLocation = '') => {
     try {
       const fetchedEvents = await getEventsByLocation(searchLocation);
@@ -47,12 +49,10 @@ const Index = ({ onLogout }) => {
 
   const handleUseCurrentLocation = async () => {
     try {
-      const location = await getCurrentLocation();
-      const coordsString = `${location.coords.latitude},${location.coords.longitude}`;
-      console.log('Localização atual:', coordsString);
-      loadEvents(coordsString);
+      const coords = await getCurrentLocation();
+      console.log('Localização atual:', coords);
     } catch (error) {
-      console.warn('Erro ao obter localização:', error.message);
+      console.warn('Erro ao obter localização:', error);
     }
   };
 
