@@ -16,6 +16,8 @@ import BottomNav from '../components/layout/BottomNav';
 import { getEventsByLocation } from '../services/eventService';
 import { getCurrentLocation } from '../utils/getCurrentLocation';
 import { getCityFromCoords } from '../utils/geolocationHelpers';
+import { Ionicons } from '@expo/vector-icons';
+
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
@@ -65,14 +67,14 @@ const Index = ({ onLogout }) => {
       const coords = await getCurrentLocation();
       const cityName = await getCityFromCoords(coords);
       setCity(cityName);
-
       await AsyncStorage.setItem('userCity', cityName);
-
       loadEvents(cityName);
     } catch (error) {
       console.warn('Erro ao obter localização:', error);
+      alert('Erro: ' + error.message);
     }
   };
+
 
   const upcomingEvents = events.slice(0, 3);
   const highlyRatedEvents = [...events].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
@@ -84,8 +86,17 @@ const Index = ({ onLogout }) => {
       <>
         <View style={styles.headerWrapper}>
           <View style={styles.g_01_header}>
-            <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
-            {city && <Text style={styles.subHeaderText}>{city}</Text>}
+            <View style={styles.nomerow}>
+              <Ionicons name="person-circle-outline" size={40} color="#fff" />
+              <Text style={styles.headerText}>{name || 'visitante'}</Text>
+            </View>
+            {city && (
+              <View style={styles.cityRow}>
+                <Ionicons name="location-outline" size={16} color="#fff" />
+                <Text style={styles.subHeaderText}>{city}</Text>
+              </View>
+            )}
+
           </View>
 
           <Image source={require('../assets/logobranca.png')} style={styles.image} />
@@ -123,19 +134,25 @@ const styles = StyleSheet.create({
   },
   headerWrapper: {
     paddingHorizontal: 20,
-    paddingTop: 28,
+    paddingTop: 15,
     paddingBottom: 12,
     backgroundColor: '#4D7E53',
+    borderBottomLeftRadius: 150,
+    borderBottomRightRadius: 150,
+    paddingBottom: 20,
   },
   headerText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    marginTop: -3,
+    marginLeft: 2,
   },
   subHeaderText: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginTop: 4,
+    fontSize: 14,
+    color: '#fff',
+    marginTop: -1,
+    fontWeight: '400',
   },
   logoutButtonContainer: {
     marginHorizontal: 20,
@@ -161,17 +178,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   image: {
-    width: 200,
-    height: 150,
+    width: 250,
+    height: 200,
     resizeMode: 'contain',
-    margin: -10,
+    margin: -30,
     alignSelf: 'center',
   },
   g_01_header: {
     flexDirection: 'row',
-    alignContent: 'flex-end',
-    alignItems: 'flex-end',
-
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: -35,
+  },
+  cityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  nomerow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 4,
   }
 });
 
