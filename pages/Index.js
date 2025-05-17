@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   Button,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from '../components/layout/SearchBar';
@@ -14,10 +15,12 @@ import EventList from '../components/events/EventList';
 import BottomNav from '../components/layout/BottomNav';
 import { getEventsByLocation } from '../services/eventService';
 import { getCurrentLocation } from '../utils/getCurrentLocation';
+import { getCityFromCoords } from '../utils/geolocationHelpers';
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
   const [name, setName] = useState(null);
+  const [city, setCity] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -25,18 +28,28 @@ const Index = ({ onLogout }) => {
         const userData = await AsyncStorage.getItem('loggedInUser');
         if (userData) {
           const parsedUser = JSON.parse(userData);
-          setName(parsedUser.nome); 
+          setName(parsedUser.nome);
         }
       } catch (e) {
         console.error('Erro ao carregar usuário:', e);
       }
     };
 
+    const loadSavedCity = async () => {
+      try {
+        const savedCity = await AsyncStorage.getItem('userCity');
+        if (savedCity) {
+          setCity(savedCity);
+        }
+      } catch (e) {
+        console.error('Erro ao carregar cidade:', e);
+      }
+    };
+
     loadUser();
     loadEvents();
+    loadSavedCity();
   }, []);
-
-
 
   const loadEvents = async (searchLocation = '') => {
     try {
@@ -50,7 +63,12 @@ const Index = ({ onLogout }) => {
   const handleUseCurrentLocation = async () => {
     try {
       const coords = await getCurrentLocation();
-      console.log('Localização atual:', coords);
+      const cityName = await getCityFromCoords(coords);
+      setCity(cityName);
+
+      await AsyncStorage.setItem('userCity', cityName);
+
+      loadEvents(cityName);
     } catch (error) {
       console.warn('Erro ao obter localização:', error);
     }
@@ -63,11 +81,16 @@ const Index = ({ onLogout }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerWrapper}>
-        <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
-        <Text style={styles.subHeaderText}>Vamos encontrar algo legal perto de você</Text>
-      </View>
+      <>
+        <View style={styles.headerWrapper}>
+          <View>
+            <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
+            {city && <Text style={styles.subHeaderText}>{city}</Text>}
+          </View>
 
+          <Image source={require('../assets/logobranca.png')} style={styles.image} />
+        </View>
+      </>
       <SearchBar onSearch={loadEvents} />
 
       {onLogout && (
@@ -102,6 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 28,
     paddingBottom: 12,
+    backgroundColor: '#4D7E53',
   },
   headerText: {
     fontSize: 24,
@@ -135,6 +159,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 14,
+  },
+  image: {
+    width: 200,
+    height: 150,
+    resizeMode: 'contain',
+    margin: -10,
+    alignSelf: 'center',
   },
 });
 
