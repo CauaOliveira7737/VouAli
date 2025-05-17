@@ -35,7 +35,7 @@ const EventDetails = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Image
-          source={{ uri: event.image || 'https://via.placeholder.com/400x200' }}
+          source={require('../assets/pablo.jpg')}
           style={styles.image}
         />
 

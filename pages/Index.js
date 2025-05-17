@@ -83,7 +83,7 @@ const Index = ({ onLogout }) => {
     <SafeAreaView style={styles.container}>
       <>
         <View style={styles.headerWrapper}>
-          <View>
+          <View style={styles.g_01_header}>
             <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
             {city && <Text style={styles.subHeaderText}>{city}</Text>}
           </View>
@@ -167,6 +167,12 @@ const styles = StyleSheet.create({
     margin: -10,
     alignSelf: 'center',
   },
+  g_01_header: {
+    flexDirection: 'row',
+    alignContent: 'flex-end',
+    alignItems: 'flex-end',
+
+  }
 });
 
 export default Index;

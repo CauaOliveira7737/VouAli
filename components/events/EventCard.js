@@ -4,11 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 
 const EventCard = ({ id, title, description, date, time, location, image, rating = 0 }) => {
   const navigation = useNavigation();
-  const defaultImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop';
+  
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('EventDetails', { id })}>
-      <Image source={{ uri: image || defaultImage }} style={styles.image} />
+      <Image
+        source={image ? { uri: image } : require('../assets/pablo.jpg') }
+        style={styles.image}
+      />
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description} numberOfLines={2}>{description}</Text>

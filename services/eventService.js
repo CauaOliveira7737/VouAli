@@ -5,7 +5,7 @@ const mockEvents = [
       description: 'Um festival de música ao ar livre com bandas locais.',
       date: '2025-06-15',
       time: '18:00',
-      location: 'Parque Central',
+      location: 'Recife',
       image: '',
       rating: 4.5,
       category: 'Música',
