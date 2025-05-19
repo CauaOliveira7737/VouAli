@@ -5,8 +5,6 @@ import {
   StyleSheet,
   SafeAreaView,
   Text,
-  TouchableOpacity,
-  Button,
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,7 +15,6 @@ import { getEventsByLocation } from '../services/eventService';
 import { getCurrentLocation } from '../utils/getCurrentLocation';
 import { getCityFromCoords } from '../utils/geolocationHelpers';
 import { Ionicons } from '@expo/vector-icons';
-
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
@@ -37,20 +34,25 @@ const Index = ({ onLogout }) => {
       }
     };
 
-    const loadSavedCity = async () => {
+    const loadSavedCityOrGetCurrent = async () => {
       try {
         const savedCity = await AsyncStorage.getItem('userCity');
         if (savedCity) {
           setCity(savedCity);
+        } else {
+          const coords = await getCurrentLocation();
+          const cityName = await getCityFromCoords(coords);
+          setCity(cityName);
+          await AsyncStorage.setItem('userCity', cityName);
         }
       } catch (e) {
-        console.error('Erro ao carregar cidade:', e);
+        console.error('Erro ao obter cidade atual:', e);
       }
     };
 
     loadUser();
-    loadEvents();
-    loadSavedCity();
+    loadEvents(); // eventos não dependem da cidade
+    loadSavedCityOrGetCurrent(); // cidade só para visual
   }, []);
 
   const loadEvents = async (searchLocation = '') => {
@@ -62,63 +64,34 @@ const Index = ({ onLogout }) => {
     }
   };
 
-  const handleUseCurrentLocation = async () => {
-    try {
-      const coords = await getCurrentLocation();
-      const cityName = await getCityFromCoords(coords);
-      setCity(cityName);
-      await AsyncStorage.setItem('userCity', cityName);
-      loadEvents(cityName);
-    } catch (error) {
-      console.warn('Erro ao obter localização:', error);
-      alert('Erro: ' + error.message);
-    }
-  };
-
-
   const upcomingEvents = events.slice(0, 3);
   const highlyRatedEvents = [...events].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
   const recentlyAttended = events.slice(2, 5);
-  const nearbyEvents = events.slice(1, 4);
 
   return (
     <SafeAreaView style={styles.container}>
-      <>
-        <View style={styles.headerWrapper}>
-          <View style={styles.g_01_header}>
-            <View style={styles.nomerow}>
-              <Ionicons name="person-circle-outline" size={40} color="#fff" />
-              <Text style={styles.headerText}>{name || 'visitante'}</Text>
-            </View>
-            {city && (
-              <View style={styles.cityRow}>
-                <Ionicons name="location-outline" size={16} color="#fff" />
-                <Text style={styles.subHeaderText}>{city}</Text>
-              </View>
-            )}
-
+      <View style={styles.headerWrapper}>
+        <View style={styles.g_01_header}>
+          <View style={styles.nomerow}>
+            <Ionicons name="person-circle-outline" size={40} color="#fff" />
+            <Text style={styles.headerText}>{name || 'visitante'}</Text>
           </View>
-
-          <Image source={require('../assets/logobranca.png')} style={styles.image} />
+          {city && (
+            <View style={styles.cityRow}>
+              <Ionicons name="location-outline" size={16} color="#fff" />
+              <Text style={styles.subHeaderText}>{city}</Text>
+            </View>
+          )}
         </View>
-      </>
+        <Image source={require('../assets/logobranca.png')} style={styles.image} />
+      </View>
+
       <SearchBar onSearch={loadEvents} />
 
-      {onLogout && (
-        <View style={styles.logoutButtonContainer}>
-          <Button title="Sair" color="#EF4444" onPress={onLogout} />
-        </View>
-      )}
-
-      <TouchableOpacity style={styles.locationButton} onPress={handleUseCurrentLocation}>
-        <Text style={styles.locationButtonText}>🎯 Usar minha localização</Text>
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <EventList events={nearbyEvents} title="📍 Eventos Próximos" />
-        <EventList events={upcomingEvents} title="📅 Em Breve" />
-        <EventList events={recentlyAttended} title="✅ Recentemente Visitados" />
-        <EventList events={highlyRatedEvents} title="⭐ Mais Bem Avaliados" />
+        <EventList events={upcomingEvents} title="Em Breve" />
+        <EventList events={recentlyAttended} title="Recentemente Visitados" />
+        <EventList events={highlyRatedEvents} title="Mais Bem Avaliados" />
         <View style={{ height: 40 }} />
       </ScrollView>
 
@@ -134,7 +107,7 @@ const styles = StyleSheet.create({
   },
   headerWrapper: {
     paddingHorizontal: 20,
-    paddingTop: 15,
+    paddingTop: 38,
     paddingBottom: 12,
     backgroundColor: '#4D7E53',
     borderBottomLeftRadius: 150,
@@ -154,28 +127,9 @@ const styles = StyleSheet.create({
     marginTop: -1,
     fontWeight: '400',
   },
-  logoutButtonContainer: {
-    marginHorizontal: 20,
-    marginTop: 6,
-    marginBottom: 6,
-  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 100,
-  },
-  locationButton: {
-    marginHorizontal: 20,
-    marginTop: 6,
-    marginBottom: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: '#4D7E53',
-    alignItems: 'center',
-  },
-  locationButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 14,
   },
   image: {
     width: 250,
@@ -201,7 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 4,
     marginLeft: 4,
-  }
+  },
 });
 
 export default Index;

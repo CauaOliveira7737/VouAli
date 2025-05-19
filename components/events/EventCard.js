@@ -9,7 +9,7 @@ const EventCard = ({ id, title, description, date, time, location, image, rating
   return (
     <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('EventDetails', { id })}>
       <Image
-        source={image ? { uri: image } : require('../assets/pablo.jpg') }
+        source={image ? { uri: image } : require('../../assets/pablo.jpg') }
         style={styles.image}
       />
       <View style={styles.detailsContainer}>

@@ -10,7 +10,6 @@ const mockEvents = [
       rating: 4.5,
       category: 'Música',
     },
-    // ... outros eventos
   ];
   
   export const getEventsByLocation = async (location) => {

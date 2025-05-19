@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#4D7E53',
     justifyContent: 'center',
-    paddingHorizontal: 80,
+    paddingHorizontal: 60,
     borderBottomRightRadius: 300,
     marginBottom: 80,
     paddingBottom: 100,
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   image: {
-    width: 200,
-    height: 150,
+    width: 300,
+    height: 250,
     resizeMode: 'contain',
-    margin: -10,
+    margin: -20,
     alignSelf: 'center',
   },
   footerCircle: {
