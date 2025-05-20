@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -41,34 +42,36 @@ const App = () => {
   if (loading) return null;
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isLoggedIn ? (
-          <>
-            <Stack.Screen name="Login">
-              {({ navigation }) => <LoginScreen onLogin={handleLogin} navigation={navigation} />}
-            </Stack.Screen>
-            <Stack.Screen name="Register">
-              {({ navigation }) => (
-                <RegisterScreen onLogin={handleLogin} navigation={navigation} />
-              )}
-            </Stack.Screen>
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="Index">
-              {() => <Index onLogout={handleLogout} />}
-            </Stack.Screen>
-            <Stack.Screen name="EventDetails" component={EventDetails} />
-            <Stack.Screen name="Calendar" component={Calendar} />
-            <Stack.Screen name="Favorites" component={Favorites} />
-            <Stack.Screen name="Map" component={Map} />
-            <Stack.Screen name="Menu" component={Menu} />
-            <Stack.Screen name="NotFound" component={NotFound} />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {!isLoggedIn ? (
+            <>
+              <Stack.Screen name="Login">
+                {({ navigation }) => <LoginScreen onLogin={handleLogin} navigation={navigation} />}
+              </Stack.Screen>
+              <Stack.Screen name="Register">
+                {({ navigation }) => (
+                  <RegisterScreen onLogin={handleLogin} navigation={navigation} />
+                )}
+              </Stack.Screen>
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="Index">
+                {() => <Index onLogout={handleLogout} />}
+              </Stack.Screen>
+              <Stack.Screen name="EventDetails" component={EventDetails} />
+              <Stack.Screen name="Calendar" component={Calendar} />
+              <Stack.Screen name="Favorites" component={Favorites} />
+              <Stack.Screen name="Map" component={Map} />
+              <Stack.Screen name="Menu" component={Menu} />
+              <Stack.Screen name="NotFound" component={NotFound} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 
