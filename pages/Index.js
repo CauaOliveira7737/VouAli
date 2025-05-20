@@ -5,8 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Text,
-  TouchableOpacity,
-  Button,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from '../components/layout/SearchBar';
@@ -14,10 +13,13 @@ import EventList from '../components/events/EventList';
 import BottomNav from '../components/layout/BottomNav';
 import { getEventsByLocation } from '../services/eventService';
 import { getCurrentLocation } from '../utils/getCurrentLocation';
+import { getCityFromCoords } from '../utils/geolocationHelpers';
+import { Ionicons } from '@expo/vector-icons';
 
 const Index = ({ onLogout }) => {
   const [events, setEvents] = useState([]);
   const [name, setName] = useState(null);
+  const [city, setCity] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -25,18 +27,33 @@ const Index = ({ onLogout }) => {
         const userData = await AsyncStorage.getItem('loggedInUser');
         if (userData) {
           const parsedUser = JSON.parse(userData);
-          setName(parsedUser.nome); 
+          setName(parsedUser.nome);
         }
       } catch (e) {
         console.error('Erro ao carregar usuário:', e);
       }
     };
 
+    const loadSavedCityOrGetCurrent = async () => {
+      try {
+        const savedCity = await AsyncStorage.getItem('userCity');
+        if (savedCity) {
+          setCity(savedCity);
+        } else {
+          const coords = await getCurrentLocation();
+          const cityName = await getCityFromCoords(coords);
+          setCity(cityName);
+          await AsyncStorage.setItem('userCity', cityName);
+        }
+      } catch (e) {
+        console.error('Erro ao obter cidade atual:', e);
+      }
+    };
+
     loadUser();
-    loadEvents();
+    loadEvents(); // eventos não dependem da cidade
+    loadSavedCityOrGetCurrent(); // cidade só para visual
   }, []);
-
-
 
   const loadEvents = async (searchLocation = '') => {
     try {
@@ -47,44 +64,34 @@ const Index = ({ onLogout }) => {
     }
   };
 
-  const handleUseCurrentLocation = async () => {
-    try {
-      const coords = await getCurrentLocation();
-      console.log('Localização atual:', coords);
-    } catch (error) {
-      console.warn('Erro ao obter localização:', error);
-    }
-  };
-
   const upcomingEvents = events.slice(0, 3);
   const highlyRatedEvents = [...events].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
   const recentlyAttended = events.slice(2, 5);
-  const nearbyEvents = events.slice(1, 4);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerWrapper}>
-        <Text style={styles.headerText}>Olá, {name || 'visitante'} 👋</Text>
-        <Text style={styles.subHeaderText}>Vamos encontrar algo legal perto de você</Text>
-      </View>
-
-      <SearchBar onSearch={loadEvents} />
-
-      {onLogout && (
-        <View style={styles.logoutButtonContainer}>
-          <Button title="Sair" color="#EF4444" onPress={onLogout} />
-        </View>
-      )}
-
-      <TouchableOpacity style={styles.locationButton} onPress={handleUseCurrentLocation}>
-        <Text style={styles.locationButtonText}>🎯 Usar minha localização</Text>
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <EventList events={nearbyEvents} title="📍 Eventos Próximos" />
-        <EventList events={upcomingEvents} title="📅 Em Breve" />
-        <EventList events={recentlyAttended} title="✅ Recentemente Visitados" />
-        <EventList events={highlyRatedEvents} title="⭐ Mais Bem Avaliados" />
+        <View style={styles.headerWrapper}>
+          <View style={styles.g_01_header}>
+            <View style={styles.nomerow}>
+              <Ionicons name="person-circle-outline" size={40} color="#fff" />
+              <Text style={styles.headerText}>{name || 'visitante'}</Text>
+            </View>
+            {city && (
+              <View style={styles.cityRow}>
+                <Ionicons name="location-outline" size={16} color="#fff" />
+                <Text style={styles.subHeaderText}>{city}</Text>
+              </View>
+            )}
+          </View>
+          <Image source={require('../assets/logobranca.png')} style={styles.image} />
+        </View>
+
+        <SearchBar onSearch={loadEvents} />
+
+        <EventList events={upcomingEvents} title="Em Breve" />
+        <EventList events={recentlyAttended} title="Recentemente Visitados" />
+        <EventList events={highlyRatedEvents} title="Mais Bem Avaliados" />
         <View style={{ height: 40 }} />
       </ScrollView>
 
@@ -100,41 +107,55 @@ const styles = StyleSheet.create({
   },
   headerWrapper: {
     paddingHorizontal: 20,
-    paddingTop: 28,
+    paddingTop: 38,
     paddingBottom: 12,
+    backgroundColor: '#4D7E53',
+    borderBottomLeftRadius: 150,
+    borderBottomRightRadius: 150,
+    paddingBottom: 20,
   },
   headerText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    marginTop: -3,
+    marginLeft: 2,
   },
   subHeaderText: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  logoutButtonContainer: {
-    marginHorizontal: 20,
-    marginTop: 6,
-    marginBottom: 6,
+    fontSize: 14,
+    color: '#fff',
+    marginTop: -1,
+    fontWeight: '400',
   },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 100,
+    flexGrow: 1,
   },
-  locationButton: {
-    marginHorizontal: 20,
-    marginTop: 6,
-    marginBottom: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: '#4D7E53',
+  image: {
+    width: 250,
+    height: 200,
+    resizeMode: 'contain',
+    margin: -30,
+    alignSelf: 'center',
+  },
+  g_01_header: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: -35,
   },
-  locationButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 14,
+  cityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  nomerow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 4,
   },
 });
 
