@@ -35,7 +35,7 @@ const EventDetails = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Image
-          source={require('../assets/pablo.jpg')}
+          source ={{ uri: event.image }}
           style={styles.image}
         />
 
