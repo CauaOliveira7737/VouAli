@@ -10,7 +10,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from '../components/layout/SearchBar';
 import EventList from '../components/events/EventList';
-import BottomNav from '../components/layout/BottomNav';
 import { getEventsByLocation } from '../services/eventService';
 import { getCurrentLocation } from '../utils/getCurrentLocation';
 import { getCityFromCoords } from '../utils/geolocationHelpers';
@@ -51,8 +50,8 @@ const Index = ({ onLogout }) => {
     };
 
     loadUser();
-    loadEvents(); // eventos não dependem da cidade
-    loadSavedCityOrGetCurrent(); // cidade só para visual
+    loadEvents(); 
+    loadSavedCityOrGetCurrent(); 
   }, []);
 
   const loadEvents = async (searchLocation = '') => {
@@ -95,7 +94,6 @@ const Index = ({ onLogout }) => {
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      <BottomNav />
     </SafeAreaView>
   );
 };
