@@ -115,4 +115,5 @@ Desenvolvido por **Carlos Henrique**
 Com colaboração de:
 
 - **Cauã Pereira** — [@CauaOliveira7737](https://github.com/CauaOliveira7737)  
-- **Davi Miranda** — [@dav1zeraa](https://github.com/dav1zeraa)________________
+- **Davi Miranda** — [@dav1zeraa](https://github.com/dav1zeraa)
+_________________
