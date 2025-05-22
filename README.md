@@ -31,7 +31,7 @@ ________________
 2. Clone o repositório:
 
 ```bash
-https://github.com/hen-rikLab/VouAli
+https://github.com/CauaOliveira7737/VouAli
 cd VouAli
 ```
 
